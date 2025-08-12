@@ -1,0 +1,56 @@
+.car-details {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.car-details h2 {
+  margin-bottom: 0.5rem;
+}
+
+.car-details p {
+  margin-bottom: 1rem;
+}
+
+.add-repair-button,
+.back-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 1rem;
+}
+
+.add-repair-button:hover,
+.back-button:hover {
+  background-color: #45a049;
+}
+
+.car-details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.car-details th,
+.car-details td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.car-details th {
+  background-color: #333;
+  color: white;
+}
+
+.car-details tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.car-details tr:hover {
+  background-color: #ddd;
+}

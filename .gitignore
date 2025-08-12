@@ -1,0 +1,33 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Node / React / Backend
+node_modules/
+build/
+dist/
+.env
+.env.*
+
+CarServiceTracker/frontend/node_modules/
+CarServiceTracker/frontend/build/
+CarServiceTracker/frontend/dist/
+CarServiceTracker/frontend/.env
+CarServiceTracker/backend/node_modules/
+CarServiceTracker/backend/.env
+
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/terraform.tfstate
+infra/terraform.tfstate.*
+infra/terraform.tfvars
+
+# IDE / Editor
+*.vscode/
+*.idea/
+
+# Temp / backup files
+*.bak
+*.swp
+*.tmp

@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+*.log
+
+# dotenv files
+.env
+
+# Docker images
+*.tar
+
+# OS
+.DS_Store
+
+# IDE/editor configs
+*.swp
+.vscode/
+.idea/
+
+# test coverage or temp
+coverage/

@@ -1,0 +1,119 @@
+.car-list-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.car-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.car-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.car-table th,
+.car-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.car-table th {
+  background-color: #333;
+  color: white;
+}
+
+.car-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.car-table tr:hover {
+  background-color: #ddd;
+}
+
+.car-table a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.car-table a:hover {
+  text-decoration: underline;
+}.car-list-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.car-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.car-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.car-table th,
+.car-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.car-table th {
+  background-color: #333;
+  color: white;
+}
+
+.car-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.car-table tr:hover {
+  background-color: #ddd;
+}
+
+.car-table a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.car-table a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,4 @@
+project_prefix      = "cartrack"
+resource_group_name = "rg-cartrack-dev"
+location            = "northeurope"
+db_password         = "<set_your_password_here>"
