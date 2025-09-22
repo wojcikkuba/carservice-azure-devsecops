@@ -1,0 +1,892 @@
+       _               _
+   ___| |__   ___  ___| | _______   __
+  / __| '_ \ / _ \/ __| |/ / _ \ \ / /
+ | (__| | | |  __/ (__|   < (_) \ V /
+  \___|_| |_|\___|\___|_|\_\___/ \_/
+
+By Prisma Cloud | version: 3.2.461
+
+terraform scan results:
+
+Passed checks: 11, Failed checks: 37, Skipped checks: 0
+
+Check: CKV_AZURE_57: "Ensure that CORS disallows every resource to access app services"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-cors-disallows-every-resource-to-access-app-services
+Check: CKV_AZURE_14: "Ensure web app redirects all HTTP traffic to HTTPS in Azure App Service"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-5
+Check: CKV_AZURE_16: "Ensure that Register with Azure Active Directory is enabled on App Service"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-iam-policies/bc-azr-iam-1
+Check: CKV_AZURE_71: "Ensure that Managed identity provider is enabled for app services"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-managed-identity-provider-is-enabled-for-app-services
+Check: CKV_AZURE_15: "Ensure web app is using the latest version of TLS encryption"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-6
+Check: CKV_AZURE_72: "Ensure that remote debugging is not enabled for app services"
+        PASSED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-remote-debugging-is-not-enabled-for-app-services
+Check: CKV_AZURE_111: "Ensure that key vault enables soft delete"
+        PASSED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-enables-soft-delete
+Check: CKV_AZURE_57: "Ensure that CORS disallows every resource to access app services"
+        PASSED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-cors-disallows-every-resource-to-access-app-services
+Check: CKV_AZURE_14: "Ensure web app redirects all HTTP traffic to HTTPS in Azure App Service"
+        PASSED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-5
+Check: CKV_AZURE_15: "Ensure web app is using the latest version of TLS encryption"
+        PASSED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-6
+Check: CKV_AZURE_72: "Ensure that remote debugging is not enabled for app services"
+        PASSED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-remote-debugging-is-not-enabled-for-app-services
+Check: CKV_AZURE_13: "Ensure App Service Authentication is set on Azure App Service"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azr-general-2
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_17: "Ensure the web app has 'Client Certificates (Incoming client certificates)' set"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-7
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_65: "Ensure that App service enables detailed error messages"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/tbdensure-that-app-service-enables-detailed-error-messages
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_66: "Ensure that App service enables failed request tracing"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/ensure-that-app-service-enables-failed-request-tracing
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_78: "Ensure FTP deployments are disabled"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-ftp-deployments-are-disabled
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_63: "Ensure that App service enables HTTP logging"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/ensure-that-app-service-enables-http-logging
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_18: "Ensure that 'HTTP Version' is the latest if used to run the web app"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-8
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_213: "Ensure that App Service configures health check"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/azr-networking-213
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_88: "Ensure that app services use Azure Files"
+        FAILED for resource: azurerm_app_service.backend_app
+        File: \backend_app.tf:1-30
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-app-services-use-azure-files
+
+                1  | resource "azurerm_app_service" "backend_app" {
+                2  |   name                = "${var.project_prefix}-backend-app"
+                3  |   location            = azurerm_resource_group.rg.location
+                4  |   resource_group_name = azurerm_resource_group.rg.name
+                5  |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                6  |   https_only          = true
+                7  |
+                8  |   identity {
+                9  |     type         = "UserAssigned"
+                10 |     identity_ids = [azurerm_user_assigned_identity.app_identity.id]
+                11 |   }
+                12 |
+                13 |   site_config {
+                14 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+                15 |     always_on        = true
+                16 |   }
+                17 |
+                18 |   app_settings = {
+                19 |     WEBSITES_PORT = "3000"
+                20 |     DB_HOST       = azurerm_postgresql_flexible_server.db.fqdn
+                21 |     DB_USER       = "caradmin"
+                22 |     DB_PASS       = var.db_password
+                23 |     DB_NAME       = "cartracker"
+                24 |     NODE_ENV      = "production"
+                25 |   }
+                26 |
+                27 |   depends_on = [
+                28 |     azurerm_key_vault_access_policy.backend_app
+                29 |   ]
+                30 | }
+
+Check: CKV_AZURE_189: "Ensure that Azure Key Vault disables public network access"
+        FAILED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/azr-networking-189
+
+                3  | resource "azurerm_key_vault" "kv" {
+                4  |   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+                5  |   location            = azurerm_resource_group.rg.location
+                6  |   resource_group_name = azurerm_resource_group.rg.name
+                7  |   tenant_id           = data.azurerm_client_config.current.tenant_id
+                8  |   sku_name            = "standard"
+                9  |
+                10 |   purge_protection_enabled   = false # true dla proda
+                11 |   soft_delete_retention_days = 7
+                12 | }
+
+Check: CKV_AZURE_109: "Ensure that key vault allows firewall rules settings"
+        FAILED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/ensure-that-key-vault-allows-firewall-rules-settings
+
+                3  | resource "azurerm_key_vault" "kv" {
+                4  |   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+                5  |   location            = azurerm_resource_group.rg.location
+                6  |   resource_group_name = azurerm_resource_group.rg.name
+                7  |   tenant_id           = data.azurerm_client_config.current.tenant_id
+                8  |   sku_name            = "standard"
+                9  |
+                10 |   purge_protection_enabled   = false # true dla proda
+                11 |   soft_delete_retention_days = 7
+                12 | }
+
+Check: CKV_AZURE_110: "Ensure that key vault enables purge protection"
+        FAILED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-enables-purge-protection
+
+                3  | resource "azurerm_key_vault" "kv" {
+                4  |   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+                5  |   location            = azurerm_resource_group.rg.location
+                6  |   resource_group_name = azurerm_resource_group.rg.name
+                7  |   tenant_id           = data.azurerm_client_config.current.tenant_id
+                8  |   sku_name            = "standard"
+                9  |
+                10 |   purge_protection_enabled   = false # true dla proda
+                11 |   soft_delete_retention_days = 7
+                12 | }
+
+Check: CKV_AZURE_42: "Ensure the key vault is recoverable"
+        FAILED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-the-key-vault-is-recoverable
+
+                3  | resource "azurerm_key_vault" "kv" {
+                4  |   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+                5  |   location            = azurerm_resource_group.rg.location
+                6  |   resource_group_name = azurerm_resource_group.rg.name
+                7  |   tenant_id           = data.azurerm_client_config.current.tenant_id
+                8  |   sku_name            = "standard"
+                9  |
+                10 |   purge_protection_enabled   = false # true dla proda
+                11 |   soft_delete_retention_days = 7
+                12 | }
+
+Check: CKV_AZURE_114: "Ensure that key vault secrets have "content_type" set"
+        FAILED for resource: azurerm_key_vault_secret.db_host
+        File: \keyvault.tf:27-33
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-secrets-have-content-type-set
+
+                27 | resource "azurerm_key_vault_secret" "db_host" {
+                28 |   name         = "DB-HOST"
+                29 |   value        = azurer**********
+                30 |   key_vault_id = azurerm_key_vault.kv.id
+                31 |
+                32 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                33 | }
+
+Check: CKV_AZURE_41: "Ensure that the expiration date is set on all secrets"
+        FAILED for resource: azurerm_key_vault_secret.db_host
+        File: \keyvault.tf:27-33
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-secrets-policies/set-an-expiration-date-on-all-secrets
+
+                27 | resource "azurerm_key_vault_secret" "db_host" {
+                28 |   name         = "DB-HOST"
+                29 |   value        = azurer**********
+                30 |   key_vault_id = azurerm_key_vault.kv.id
+                31 |
+                32 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                33 | }
+
+Check: CKV_AZURE_114: "Ensure that key vault secrets have "content_type" set"
+        FAILED for resource: azurerm_key_vault_secret.db_user
+        File: \keyvault.tf:35-41
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-secrets-have-content-type-set
+
+                35 | resource "azurerm_key_vault_secret" "db_user" {
+                36 |   name         = "DB-USER"
+                37 |   value        = "ca**********"
+                38 |   key_vault_id = azurerm_key_vault.kv.id
+                39 |
+                40 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                41 | }
+
+Check: CKV_AZURE_41: "Ensure that the expiration date is set on all secrets"
+        FAILED for resource: azurerm_key_vault_secret.db_user
+        File: \keyvault.tf:35-41
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-secrets-policies/set-an-expiration-date-on-all-secrets
+
+                35 | resource "azurerm_key_vault_secret" "db_user" {
+                36 |   name         = "DB-USER"
+                37 |   value        = "ca**********"
+                38 |   key_vault_id = azurerm_key_vault.kv.id
+                39 |
+                40 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                41 | }
+
+Check: CKV_AZURE_114: "Ensure that key vault secrets have "content_type" set"
+        FAILED for resource: azurerm_key_vault_secret.db_pass
+        File: \keyvault.tf:43-49
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-secrets-have-content-type-set
+
+                43 | resource "azurerm_key_vault_secret" "db_pass" {
+                44 |   name         = "DB-PASS"
+                45 |   value        = var.db_password
+                46 |   key_vault_id = azurerm_key_vault.kv.id
+                47 |
+                48 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                49 | }
+
+Check: CKV_AZURE_41: "Ensure that the expiration date is set on all secrets"
+        FAILED for resource: azurerm_key_vault_secret.db_pass
+        File: \keyvault.tf:43-49
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-secrets-policies/set-an-expiration-date-on-all-secrets
+
+                43 | resource "azurerm_key_vault_secret" "db_pass" {
+                44 |   name         = "DB-PASS"
+                45 |   value        = var.db_password
+                46 |   key_vault_id = azurerm_key_vault.kv.id
+                47 |
+                48 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                49 | }
+
+Check: CKV_AZURE_114: "Ensure that key vault secrets have "content_type" set"
+        FAILED for resource: azurerm_key_vault_secret.db_name
+        File: \keyvault.tf:51-57
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-key-vault-secrets-have-content-type-set
+
+                51 | resource "azurerm_key_vault_secret" "db_name" {
+                52 |   name         = "DB-NAME"
+                53 |   value        = "ca**********"
+                54 |   key_vault_id = azurerm_key_vault.kv.id
+                55 |
+                56 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                57 | }
+
+Check: CKV_AZURE_41: "Ensure that the expiration date is set on all secrets"
+        FAILED for resource: azurerm_key_vault_secret.db_name
+        File: \keyvault.tf:51-57
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-secrets-policies/set-an-expiration-date-on-all-secrets
+
+                51 | resource "azurerm_key_vault_secret" "db_name" {
+                52 |   name         = "DB-NAME"
+                53 |   value        = "ca**********"
+                54 |   key_vault_id = azurerm_key_vault.kv.id
+                55 |
+                56 |   depends_on = [azurerm_key_vault_access_policy.terraform_user]
+                57 | }
+
+Check: CKV_AZURE_13: "Ensure App Service Authentication is set on Azure App Service"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azr-general-2
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_17: "Ensure the web app has 'Client Certificates (Incoming client certificates)' set"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-7
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_65: "Ensure that App service enables detailed error messages"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/tbdensure-that-app-service-enables-detailed-error-messages
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_66: "Ensure that App service enables failed request tracing"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/ensure-that-app-service-enables-failed-request-tracing
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_78: "Ensure FTP deployments are disabled"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-ftp-deployments-are-disabled
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_63: "Ensure that App service enables HTTP logging"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-logging-policies/ensure-that-app-service-enables-http-logging
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_18: "Ensure that 'HTTP Version' is the latest if used to run the web app"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/bc-azr-networking-8
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_16: "Ensure that Register with Azure Active Directory is enabled on App Service"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-iam-policies/bc-azr-iam-1
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_71: "Ensure that Managed identity provider is enabled for app services"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-managed-identity-provider-is-enabled-for-app-services
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_213: "Ensure that App Service configures health check"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-networking-policies/azr-networking-213
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_88: "Ensure that app services use Azure Files"
+        FAILED for resource: azurerm_app_service.app
+        File: \main.tf:36-53
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-that-app-services-use-azure-files
+
+                36 | resource "azurerm_app_service" "app" {
+                37 |   name                = "${var.project_prefix}-app"
+                38 |   location            = azurerm_resource_group.rg.location
+                39 |   resource_group_name = azurerm_resource_group.rg.name
+                40 |   app_service_plan_id = azurerm_app_service_plan.plan.id
+                41 |
+                42 |   site_config {
+                43 |     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+                44 |     always_on        = true
+                45 |   }
+                46 |
+                47 |   app_settings = {
+                48 |     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+                49 |     WEBSITES_PORT                       = "80"
+                50 |   }
+                51 |
+                52 |   https_only = true
+                53 | }
+Check: CKV_AZURE_136: "Ensure that PostgreSQL Flexible server enables geo-redundant backups"
+        FAILED for resource: azurerm_postgresql_flexible_server.db
+        File: \postgresql.tf:1-20
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/ensure-azure-postgresql-flexible-server-enables-geo-redundant-backups
+
+                1  | resource "azurerm_postgresql_flexible_server" "db" {
+                2  |   name                   = "${var.project_prefix}-db"
+                3  |   resource_group_name    = azurerm_resource_group.rg.name
+                4  |   location              = azurerm_resource_group.rg.location
+                5  |   version               = "13"
+                6  |   administrator_login    = "caradmin"
+                7  |   administrator_password = var.db_password
+                8  |   sku_name              = "B_Standard_B1ms"
+                9  |   storage_mb            = 32768
+                10 |   backup_retention_days = 7
+                11 |   auto_grow_enabled     = true
+                12 |   public_network_access_enabled = true
+                13 |
+                14 |   lifecycle {
+                15 |     ignore_changes = [
+                16 |       zone,
+                17 |       high_availability
+                18 |     ]
+                19 |   }
+                20 | }
+
+Check: CKV2_AZURE_32: "Ensure private endpoint is configured to key vault"
+        FAILED for resource: azurerm_key_vault.kv
+        File: \keyvault.tf:3-12
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azure-2-32
+
+                3  | resource "azurerm_key_vault" "kv" {
+                4  |   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+                5  |   location            = azurerm_resource_group.rg.location
+                6  |   resource_group_name = azurerm_resource_group.rg.name
+                7  |   tenant_id           = data.azurerm_client_config.current.tenant_id
+                8  |   sku_name            = "standard"
+                9  |
+                10 |   purge_protection_enabled   = false # true dla proda
+                11 |   soft_delete_retention_days = 7
+                12 | }
+
+Check: CKV2_AZURE_57: "Ensure PostgreSQL Flexible Server is configured with private endpoint"
+        FAILED for resource: azurerm_postgresql_flexible_server.db
+        File: \postgresql.tf:1-20
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azure-2-57
+
+                1  | resource "azurerm_postgresql_flexible_server" "db" {
+                2  |   name                   = "${var.project_prefix}-db"
+                3  |   resource_group_name    = azurerm_resource_group.rg.name
+                4  |   location              = azurerm_resource_group.rg.location
+                5  |   version               = "13"
+                6  |   administrator_login    = "caradmin"
+                7  |   administrator_password = var.db_password
+                8  |   sku_name              = "B_Standard_B1ms"
+                9  |   storage_mb            = 32768
+                10 |   backup_retention_days = 7
+                11 |   auto_grow_enabled     = true
+                12 |   public_network_access_enabled = true
+                13 |
+                14 |   lifecycle {
+                15 |     ignore_changes = [
+                16 |       zone,
+                17 |       high_availability
+                18 |     ]
+                19 |   }
+                20 | }
+
+Check: CKV2_AZURE_26: "Ensure Azure PostgreSQL Flexible server is not configured with overly permissive network access"
+        FAILED for resource: azurerm_postgresql_flexible_server_firewall_rule.allow_azure_services
+        File: \postgresql.tf:22-27
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azure-2-26
+
+                22 | resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
+                23 |   name             = "AllowAzureServices"
+                24 |   server_id        = azurerm_postgresql_flexible_server.db.id
+                25 |   start_ip_address = "0.0.0.0"
+                26 |   end_ip_address   = "0.0.0.0"
+                27 | }
+
+Check: CKV2_AZURE_26: "Ensure Azure PostgreSQL Flexible server is not configured with overly permissive network access"
+        FAILED for resource: azurerm_postgresql_flexible_server_firewall_rule.allow_all
+        File: \postgresql.tf:30-35
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/azure-policies/azure-general-policies/bc-azure-2-26
+
+                30 | resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_all" {
+                31 |   name             = "AllowAllConnections"
+                32 |   server_id        = azurerm_postgresql_flexible_server.db.id
+                33 |   start_ip_address = "0.0.0.0"
+                34 |   end_ip_address   = "255.255.255.255"
+                35 | }

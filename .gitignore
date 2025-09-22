@@ -31,3 +31,6 @@ infra/terraform.tfvars
 *.bak
 *.swp
 *.tmp
+
+# kics results
+results.json

@@ -1,0 +1,140 @@
+Scanning with Keeping Infrastructure as Code Secure v2.1.13
+Preparing Scan Assets: Done
+Executing queries: [---------------------------------------------------] 100.00%
+Output Without Description, Severity: INFO, Results: 4
+Description: All outputs should contain a valid description.
+Platform: Terraform
+CWE: 710
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/59312e8a-a64e-41e7-a252-618533dd1ea8
+        [1]: ../../path/infra/outputs.tf:9
+                008:
+                009: output "database_fqdn" {
+                010:   value = azurerm_postgresql_flexible_server.db.fqdn
+        [2]: ../../path/infra/outputs.tf:13
+                012:
+                013: output "key_vault_name" {
+                014:   value = azurerm_key_vault.kv.name
+        [3]: ../../path/infra/outputs.tf:1
+                001: output "app_service_url" {
+                002:   value = "https://${azurerm_app_service.app.default_site_hostname}"
+                003: }
+        [4]: ../../path/infra/outputs.tf:5
+                004:
+                005: output "backend_app_service_url" {
+                006:   value = "https://${azurerm_app_service.backend_app.default_site_hostname}"
+App Service Managed Identity Disabled, Severity: LOW, Results: 1
+Description: Azure App Service should have managed identity enabled
+Platform: Terraform
+CWE: 285
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/b61cce4b-0cc4-472b-8096-15617a6d769b
+        [1]: ../../path/infra/main.tf:36
+                035:
+                036: resource "azurerm_app_service" "app" {
+                037:   name                = "${var.project_prefix}-app"
+Vault Auditing Disabled, Severity: MEDIUM, Results: 1
+Description: Ensure that logging for Azure KeyVault is 'Enabled'
+Platform: Terraform
+CWE: 778
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/38c71c00-c177-4cd7-8d36-cd1007cdb190
+        [1]: ../../path/infra/keyvault.tf:3
+                002:
+                003: resource "azurerm_key_vault" "kv" {
+                004:   name                = "${var.project_prefix}-kv-${random_string.suffix.result}"
+Secret Expiration Not Set, Severity: MEDIUM, Results: 4
+Description: Make sure that for all secrets the expiration date is set
+Platform: Terraform
+CWE: 521
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/dfa20ffa-f476-428f-a490-424b41e91c7f
+        [1]: ../../path/infra/keyvault.tf:27
+                026:
+                027: resource "azurerm_key_vault_secret" "db_host" {
+                028:   name         = "DB-HOST"
+        [2]: ../../path/infra/keyvault.tf:51
+                050:
+                051: resource "azurerm_key_vault_secret" "db_name" {
+                052:   name         = "DB-NAME"
+        [3]: ../../path/infra/keyvault.tf:43
+                042:
+                043: resource "azurerm_key_vault_secret" "db_pass" {
+                044:   name         = "DB-PASS"
+        [4]: ../../path/infra/keyvault.tf:35
+                034:
+                035: resource "azurerm_key_vault_secret" "db_user" {
+                036:   name         = "DB-USER"
+Key Vault Secrets Content Type Undefined, Severity: MEDIUM, Results: 4
+Description: Key Vault Secrets should have set Content Type
+Platform: Terraform
+CWE: 665
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/f8e08a38-fc6e-4915-abbe-a7aadf1d59ef
+        [1]: ../../path/infra/keyvault.tf:27
+                026:
+                027: resource "azurerm_key_vault_secret" "db_host" {
+                028:   name         = "DB-HOST"
+        [2]: ../../path/infra/keyvault.tf:35
+                034:
+                035: resource "azurerm_key_vault_secret" "db_user" {
+                036:   name         = "DB-USER"
+        [3]: ../../path/infra/keyvault.tf:43
+                042:
+                043: resource "azurerm_key_vault_secret" "db_pass" {
+                044:   name         = "DB-PASS"
+        [4]: ../../path/infra/keyvault.tf:51
+                050:
+                051: resource "azurerm_key_vault_secret" "db_name" {
+                052:   name         = "DB-NAME"
+Azure App Service Client Certificate Disabled, Severity: MEDIUM, Results: 2
+Description: Azure App Service client certificate should be enabled
+Platform: Terraform
+CWE: 295
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/a81573f9-3691-4d83-88a0-7d4af63e17a3
+        [1]: ../../path/infra/backend_app.tf:1
+                001: resource "azurerm_app_service" "backend_app" {
+                002:   name                = "${var.project_prefix}-backend-app"
+                003:   location            = azurerm_resource_group.rg.location
+        [2]: ../../path/infra/main.tf:36
+                035:
+                036: resource "azurerm_app_service" "app" {
+                037:   name                = "${var.project_prefix}-app"
+App Service HTTP2 Disabled, Severity: MEDIUM, Results: 2
+Description: App Service should have 'http2_enabled' enabled
+Platform: Terraform
+CWE: 311
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/525b53be-62ed-4244-b4df-41aecfcb4071
+        [1]: ../../path/infra/backend_app.tf:13
+                012:
+                013:   site_config {
+                014:     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
+        [2]: ../../path/infra/main.tf:42
+                041:
+                042:   site_config {
+                043:     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
+App Service Authentication Disabled, Severity: MEDIUM, Results: 2
+Description: Azure App Service authentication settings should be enabled
+Platform: Terraform
+CWE: 285
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/terraform-queries/azure/c7fc1481-2899-4490-bbd8-544a3a61a2f3
+        [1]: ../../path/infra/main.tf:36
+                035:
+                036: resource "azurerm_app_service" "app" {
+                037:   name                = "${var.project_prefix}-app"
+        [2]: ../../path/infra/backend_app.tf:1
+                001: resource "azurerm_app_service" "backend_app" {
+                002:   name                = "${var.project_prefix}-backend-app"
+                003:   location            = azurerm_resource_group.rg.location
+Passwords And Secrets - Generic Password, Severity: HIGH, Results: 1
+Description: Query to find passwords and secrets in infrastructure code.
+Platform: Common
+CWE: 798
+Learn more about this vulnerability: https://docs.kics.io/latest/queries/common-queries/a88baa34-e2ad-44ea-ad6f-8cac87bc7c71
+        [1]: ../../path/infra/terraform.tfvars:4
+                002: resource_group_name = "rg-cartrack-dev"
+                003: location            = "northeurope"
+                004: db_password         = <SECRET-MASKED-ON-PURPOSE>
+Results Summary:
+CRITICAL: 0
+HIGH: 1
+MEDIUM: 15
+LOW: 1
+INFO: 4
+TOTAL: 21
+Generating Reports: Done
