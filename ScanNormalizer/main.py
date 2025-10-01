@@ -1,5 +1,6 @@
 import re
-from collections import Counter, defaultdict
+import json
+from collections import Counter
 
 SEVERITY_MAP = {
     "CRITICAL": 10,
@@ -32,9 +33,9 @@ def parse_checkov(filename):
     with open(filename, encoding="utf-8") as f:
         for line in f:
             if "FAILED" in line:
-                match = re.search(r"(CRITICAL|HIGH|MEDIUM|LOW|INFO)", line, re.IGNORECASE)
-                if match:
-                    counts[match.group(1).upper()] += 1
+                match_sev = re.search(r"(CRITICAL|HIGH|MEDIUM|LOW|INFO)", line, re.IGNORECASE)
+                if match_sev:
+                    counts[match_sev.group(1).upper()] += 1
                 else:
                     counts["MEDIUM"] += 1
     return counts
@@ -45,30 +46,29 @@ def calculate_metrics(counts):
     avg_weight = total_points / total_findings if total_findings else 0
     return total_points, avg_weight, dict(counts)
 
-files = {
-    "KICS": "../kics.txt",
-    "Trivy": "../trivy.txt",
-    "Checkov": "../checkov.txt"
-}
-
-results = {}
-for tool, fname in files.items():
-    if tool == "KICS":
-        counts = parse_kics(fname)
-    elif tool == "Trivy":
-        counts = parse_trivy(fname)
-    else:
-        counts = parse_checkov(fname)
-    score, avg, breakdown = calculate_metrics(counts)
-    results[tool] = {
-        "score": score,
-        "avg": avg,
-        "breakdown": breakdown
+def main():
+    files = {
+        "KICS": "kics.txt",
+        "Trivy": "trivy.txt",
+        "Checkov": "checkov.txt"
     }
+    results = {}
+    for tool, fname in files.items():
+        if tool == "KICS":
+            counts = parse_kics(fname)
+        elif tool == "Trivy":
+            counts = parse_trivy(fname)
+        else:
+            counts = parse_checkov(fname)
+        score, avg, breakdown = calculate_metrics(counts)
+        results[tool] = {
+            "score": score,
+            "avg": avg,
+            "breakdown": breakdown
+        }
 
-# Raport
-for tool, data in results.items():
-    print(f"\n=== {tool} ===")
-    print(f"Risk score: {data['score']}")
-    print(f"Średnia waga błędu: {data['avg']:.2f}")
-    print("Rozkład:", data["breakdown"])
+    with open("scan_results.json", "w", encoding="utf-8") as f:
+        json.dump({"results": results}, f, indent=4)
+
+if __name__ == "__main__":
+    main()
