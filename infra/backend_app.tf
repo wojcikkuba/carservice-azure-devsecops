@@ -4,6 +4,18 @@ resource "azurerm_app_service" "backend_app" {
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
   https_only          = true
+  client_cert_enabled = true
+  
+  logs {
+    detailed_error_messages_enabled = true
+    failed_request_tracing_enabled = true
+    http_logs {
+      file_system {
+        retention_in_days = 4
+        retention_in_mb = 10
+      }
+    }
+  }
 
   identity {
     type         = "UserAssigned"
@@ -11,8 +23,11 @@ resource "azurerm_app_service" "backend_app" {
   }
 
   site_config {
+    health_check_path = "/health"
     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
     always_on        = true
+    ftps_state = "Disabled"
+    http2_enabled = true
   }
 
   app_settings = {
