@@ -31,6 +31,7 @@ resource "azurerm_app_service_plan" "plan" {
     tier = "Standard"
     size = "S1"
   }
+
 }
 
 resource "azurerm_app_service" "app" {
@@ -38,10 +39,29 @@ resource "azurerm_app_service" "app" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
+  client_cert_enabled = true
 
   site_config {
+    health_check_path = "/health"
     linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
     always_on        = true
+    ftps_state = "Disabled"
+    http2_enabled = true
+  }
+
+  auth_settings {
+    enabled = true
+  }
+
+  logs {
+    detailed_error_messages_enabled = true
+    failed_request_tracing_enabled = true
+    http_logs {
+      file_system {
+        retention_in_days = 4
+        retention_in_mb = 25
+      }
+    }
   }
 
   app_settings = {
