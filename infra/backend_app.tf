@@ -12,7 +12,7 @@ resource "azurerm_app_service" "backend_app" {
     http_logs {
       file_system {
         retention_in_days = 4
-        retention_in_mb = 10
+        retention_in_mb = 25
       }
     }
   }
