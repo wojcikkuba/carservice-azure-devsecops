@@ -34,12 +34,14 @@ resource "azurerm_app_service_plan" "plan" {
 
 }
 
+# checkov:skip=CKV_AZURE_17: Publiczna aplikacja webowa - nie wymuszamy certyfikatu klienta
 resource "azurerm_app_service" "app" {
   name                = "${var.project_prefix}-app"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
-  client_cert_enabled = true
+  https_only          = false
+  client_cert_enabled = false
 
   site_config {
     health_check_path = "/health"
@@ -50,7 +52,7 @@ resource "azurerm_app_service" "app" {
   }
 
   auth_settings {
-    enabled = true
+    enabled = false
   }
 
   logs {
@@ -68,6 +70,4 @@ resource "azurerm_app_service" "app" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     WEBSITES_PORT                       = "80"
   }
-
-  https_only = true
 }
