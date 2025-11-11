@@ -4,7 +4,7 @@ resource "azurerm_app_service" "backend_app" {
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
   https_only          = true
-  client_cert_enabled = true
+  client_cert_enabled = false
   
   logs {
     detailed_error_messages_enabled = true
@@ -23,7 +23,6 @@ resource "azurerm_app_service" "backend_app" {
   }
 
   site_config {
-    health_check_path = "/health"
     linux_fx_version = "DOCKER|wojcikkuba/carservice-backend:latest"
     always_on        = true
     ftps_state = "Disabled"

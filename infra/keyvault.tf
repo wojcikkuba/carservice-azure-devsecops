@@ -11,8 +11,9 @@ resource "azurerm_key_vault" "kv" {
   soft_delete_retention_days = 7
 
   network_acls {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass = "AzureServices"
+    #ip_rules = [ "83.6.89.114/32" ]
   }
 }
 
