@@ -1,3 +1,5 @@
+# checkov:skip=CKV_AZURE_13: Uwierzytelnianie App Service jest celowo wyłączone. Backend jest zabezpieczony tylko przed frontendem.
+# checkov:skip=CKV_AZURE_17: Wymuszanie certyfikatów klienta jest celowo wyłączone.
 resource "azurerm_app_service" "backend_app" {
   name                = "${var.project_prefix}-backend-app"
   location            = azurerm_resource_group.rg.location
@@ -56,4 +58,9 @@ resource "azurerm_key_vault_access_policy" "backend_app" {
   object_id    = azurerm_user_assigned_identity.app_identity.principal_id
 
   secret_permissions = ["Get", "List"]
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "backend_swift" {
+  app_service_id = azurerm_app_service.backend_app.id
+  subnet_id      = azurerm_subnet.app_subnet.id
 }

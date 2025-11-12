@@ -9,7 +9,6 @@ resource "azurerm_postgresql_flexible_server" "db" {
   storage_mb                    = 32768
   backup_retention_days         = 7
   auto_grow_enabled             = true
-  public_network_access_enabled = true
   geo_redundant_backup_enabled  = true
 
   lifecycle {
@@ -20,19 +19,48 @@ resource "azurerm_postgresql_flexible_server" "db" {
   }
 }
 
-resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
-  name             = "AllowAzureServices"
-  server_id        = azurerm_postgresql_flexible_server.db.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
+resource "azurerm_private_endpoint" "db_pe" {
+  name                = "${azurerm_postgresql_flexible_server.db.name}-pe"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  subnet_id           = azurerm_subnet.pe_subnet.id
+
+  private_service_connection {
+    name                           = "db-connection"
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_postgresql_flexible_server.db.id
+    subresource_names              = ["postgresqlServer"]
+  }
+
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ azurerm_private_dns_zone.db_dns.id ]
+  }
 }
 
-# Zezwolenie na wszystkie polaczenia
+resource "azurerm_private_dns_zone" "db_dns" {
+  name                = "privatelink.postgres.database.azure.com"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "db_dns_link" {
+  name                  = "db-dns-link"
+  resource_group_name   = azurerm_resource_group.rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.db_dns.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+}
+
+resource "azurerm_private_dns_a_record" "db_a_record" {
+  name                = azurerm_postgresql_flexible_server.db.name
+  zone_name           = azurerm_private_dns_zone.db_dns.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+  records             = [azurerm_private_endpoint.db_pe.private_service_connection[0].private_ip_address]
+}
+
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_my_ip" {
   name             = "AllowMyAdminIP"
   server_id        = azurerm_postgresql_flexible_server.db.id
-  #start_ip_address = "0.0.0.0"
-  #end_ip_address   = "255.255.255.255"
   start_ip_address = var.admin_ip_single
   end_ip_address = var.admin_ip_single
 }

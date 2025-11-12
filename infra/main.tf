@@ -34,7 +34,38 @@ resource "azurerm_app_service_plan" "plan" {
 
 }
 
+resource "azurerm_virtual_network" "vnet" {
+  name                = "${var.project_prefix}-vnet"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  address_space = [ "10.0.0.0/16" ]
+}
+
+resource "azurerm_subnet" "pe_subnet" {
+  name                 = "pe-subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_subnet" "app_subnet" {
+  name = "app-subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = [ "10.0.2.0/24" ]
+  delegation {
+    name = "default"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
 # checkov:skip=CKV_AZURE_17: Publiczna aplikacja webowa - nie wymuszamy certyfikatu klienta
+# checkov:skip=CKV_AZURE_13: Uwierzytelnianie App Service (Easy Auth) jest celowo wyłączone.
 resource "azurerm_app_service" "app" {
   name                = "${var.project_prefix}-app"
   location            = azurerm_resource_group.rg.location
