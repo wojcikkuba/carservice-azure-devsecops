@@ -19,3 +19,8 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "admin_ip" {
+  description = "IP address allowed to access the database"
+  type        = string
+}
