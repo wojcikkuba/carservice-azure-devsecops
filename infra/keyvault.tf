@@ -68,3 +68,34 @@ resource "azurerm_key_vault_secret" "db_name" {
 
   depends_on = [azurerm_key_vault_access_policy.terraform_user]
 }
+
+resource "azurerm_private_endpoint" "kv_pe" {
+  name                = "${azurerm_key_vault.kv.name}-pe"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  subnet_id           = azurerm_subnet.pe_subnet.id
+
+  private_service_connection {
+    name                           = "kv-connection"
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_key_vault.kv.id
+    subresource_names              = ["vault"]
+  }
+
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ azurerm_private_dns_zone.kv_dns.id ]
+  }
+}
+
+resource "azurerm_private_dns_zone" "kv_dns" {
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "kv_dns_link" {
+  name                  = "kv-dns-link"
+  resource_group_name   = azurerm_resource_group.rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.kv_dns.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+}
