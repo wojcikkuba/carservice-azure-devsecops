@@ -1,3 +1,4 @@
+# checkov:skip=CKV_AZURE_88: Aplikacja kontenerowa jest bezstanowa.
 # checkov:skip=CKV_AZURE_13: Uwierzytelnianie App Service jest celowo wyłączone. Backend jest zabezpieczony tylko przed frontendem.
 # checkov:skip=CKV_AZURE_17: Wymuszanie certyfikatów klienta jest celowo wyłączone.
 resource "azurerm_app_service" "backend_app" {

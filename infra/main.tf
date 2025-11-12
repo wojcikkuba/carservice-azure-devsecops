@@ -64,8 +64,11 @@ resource "azurerm_subnet" "app_subnet" {
   }
 }
 
-# checkov:skip=CKV_AZURE_17: Publiczna aplikacja webowa - nie wymuszamy certyfikatu klienta
+# checkov:skip=CKV_AZURE_71: Tożsamość zarządzana nie jest wymagana dla aplikacji frontendowej.
+# checkov:skip=CKV_AZURE_88: Aplikacja kontenerowa jest bezstanowa.
+# checkov:skip=CKV_AZURE_16: Rejestracja w Azure AD jest celowo wyłączona.
 # checkov:skip=CKV_AZURE_13: Uwierzytelnianie App Service (Easy Auth) jest celowo wyłączone.
+# checkov:skip=CKV_AZURE_17: Publiczna aplikacja webowa - nie wymuszamy certyfikatu klienta
 resource "azurerm_app_service" "app" {
   name                = "${var.project_prefix}-app"
   location            = azurerm_resource_group.rg.location
