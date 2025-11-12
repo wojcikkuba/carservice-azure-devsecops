@@ -24,3 +24,8 @@ variable "admin_ip" {
   description = "IP address allowed to access the database"
   type        = string
 }
+
+variable "admin_ip_single" {
+  description = "Single Public IP address for PostgreSQL administrative access"
+  type        = string
+}

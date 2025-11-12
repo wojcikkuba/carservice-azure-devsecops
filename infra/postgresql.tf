@@ -32,8 +32,8 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_my_ip" {
   server_id        = azurerm_postgresql_flexible_server.db.id
   #start_ip_address = "0.0.0.0"
   #end_ip_address   = "255.255.255.255"
-  start_ip_address = "83.6.89.114"
-  end_ip_address = "83.6.89.114"
+  start_ip_address = var.admin_ip_single
+  end_ip_address = var.admin_ip_single
 }
 
 resource "azurerm_postgresql_flexible_server_database" "car_db" {
