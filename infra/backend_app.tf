@@ -27,6 +27,7 @@ resource "azurerm_app_service" "backend_app" {
     always_on        = true
     ftps_state = "Disabled"
     http2_enabled = true
+    health_check_path = "/health"
   }
 
   app_settings = {
