@@ -40,15 +40,15 @@ resource "azurerm_app_service" "app" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
-  https_only          = false
+  https_only          = true
   client_cert_enabled = false
 
   site_config {
     health_check_path = "/health"
-    linux_fx_version = "DOCKER|wojcikkuba/carservice-frontend:latest"
-    always_on        = true
-    ftps_state = "Disabled"
-    http2_enabled = true
+    linux_fx_version  = "DOCKER|wojcikkuba/carservice-frontend:latest"
+    always_on         = true
+    ftps_state        = "Disabled"
+    http2_enabled     = true
   }
 
   auth_settings {
@@ -57,11 +57,11 @@ resource "azurerm_app_service" "app" {
 
   logs {
     detailed_error_messages_enabled = true
-    failed_request_tracing_enabled = true
+    failed_request_tracing_enabled  = true
     http_logs {
       file_system {
         retention_in_days = 4
-        retention_in_mb = 25
+        retention_in_mb   = 25
       }
     }
   }
